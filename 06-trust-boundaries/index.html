@@ -1,0 +1,779 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../05-communication-patterns/">
+      
+      
+        <link rel="next" href="../07-security-considerations-per-component/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.11">
+    
+    
+      
+        <title>Trust Boundaries - MCP Security Analysis</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.4af4bdda.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="cyan">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#6-trust-boundaries" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="MCP Security Analysis" class="md-header__button md-logo" aria-label="MCP Security Analysis" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            MCP Security Analysis
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Trust Boundaries
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="cyan"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="blue-grey" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/eilonc-dev/mcp-security-analysis" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    eilonc-dev/mcp-security-analysis
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="MCP Security Analysis" class="md-nav__button md-logo" aria-label="MCP Security Analysis" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    MCP Security Analysis
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/eilonc-dev/mcp-security-analysis" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    eilonc-dev/mcp-security-analysis
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-core-concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Core Concepts
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-protocol-interactions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Protocol Interactions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-data-structures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Data Structures
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-communication-patterns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Communication Patterns
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Trust Boundaries
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Trust Boundaries
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#6-trust-boundaries" class="md-nav__link">
+    <span class="md-ellipsis">
+      6. Trust Boundaries
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="6. Trust Boundaries">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#61-user-hostclient-ui" class="md-nav__link">
+    <span class="md-ellipsis">
+      6.1. User &lt;-&gt; Host/Client UI
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#62-hostclient-mcp-server" class="md-nav__link">
+    <span class="md-ellipsis">
+      6.2. Host/Client &lt;-&gt; MCP Server
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#63-hostclient-llm-service" class="md-nav__link">
+    <span class="md-ellipsis">
+      6.3. Host/Client &lt;-&gt; LLM Service
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#64-mcp-server-external-systems" class="md-nav__link">
+    <span class="md-ellipsis">
+      6.4. MCP Server &lt;-&gt; External Systems
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#65-mcp-server-internal-boundaries" class="md-nav__link">
+    <span class="md-ellipsis">
+      6.5. MCP Server Internal Boundaries
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-security-considerations-per-component/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Security Considerations
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../08-stride-modeling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Threat Modeling (STRIDE)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../09-implementation-insights/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Implementation Insights
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../10-summary-hotspots/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Summary
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+  <h1>Trust Boundaries</h1>
+
+<h2 id="6-trust-boundaries">6. Trust Boundaries</h2>
+<p>A trust boundary is a point in the system where data or execution transitions from one trust level to another. Identifying these boundaries is crucial for determining where security controls (authentication, authorization, input validation, output encoding, etc.) are most needed. In the MCP ecosystem, several key boundaries exist:</p>
+<ul>
+<li><strong>User &lt;-&gt; Host/Client UI:</strong> The interface where the user interacts with the MCP-enabled application. Trust depends on the Host application's security and UI/UX clarity.</li>
+<li><strong>Host/Client &lt;-&gt; MCP Server:</strong> The core MCP communication channel (over transports like stdio, HTTP/S, WebSockets). This is a major boundary, often between different processes or machines, potentially involving untrusted servers.</li>
+<li><strong>Host/Client &lt;-&gt; LLM Service:</strong> When using the <code>sampling</code> feature, the Host/Client communicates with an external LLM API. Trust relies on the LLM provider's security and the API contract.</li>
+<li><strong>MCP Server &lt;-&gt; External Systems:</strong> MCP Servers often act as intermediaries, accessing databases, APIs, filesystems, or other resources based on MCP requests (especially for <code>resources/read</code> and <code>tools/call</code>).</li>
+<li><strong>MCP Server Internal Boundaries:</strong> Within the server itself, boundaries exist between request handling logic, tool execution logic, resource access logic, and data stores.</li>
+</ul>
+<p>Understanding the assumptions and risks at each boundary is critical for designing secure MCP implementations.</p>
+<h3 id="61-user-hostclient-ui">6.1. User &lt;-&gt; Host/Client UI</h3>
+<ul>
+<li><strong>Description:</strong> The interface presented by the Host application (IDE, chat client) where the user interacts with MCP features, implicitly or explicitly.</li>
+<li><strong>Trust Assumptions:</strong> The user generally trusts the Host application they are running, but may not fully trust all <em>extensions</em> or <em>servers</em> it connects to via MCP. The Host application is trusted to accurately represent information and actions related to MCP.</li>
+<li><strong>Key Risks:</strong><ul>
+<li><strong>Misleading UI:</strong> The Host UI might not clearly indicate which server is providing a resource/tool/prompt, or what actions a tool/sampling request will perform, leading the user to approve unsafe operations.</li>
+<li><strong>Lack of Consent/Control:</strong> The Host might not implement proper consent flows (as recommended by the MCP spec) for resource access, tool execution, or sampling, leading to unexpected data exposure or actions.</li>
+<li><strong>UI Redressing/Clickjacking:</strong> Standard web/UI vulnerabilities in the Host application could be exploited to trick the user into unintended MCP-related actions.</li>
+<li><strong>Host Compromise:</strong> If the Host application itself is compromised, all MCP interactions become untrustworthy.</li>
+</ul>
+</li>
+<li><strong>Required Controls (Host Application Responsibility):</strong><ul>
+<li><strong>Clear Attribution:</strong> Clearly display the source (MCP Server) of resources, tools, and prompts.</li>
+<li><strong>Explicit Consent:</strong> Implement robust, understandable confirmation dialogs for:<ul>
+<li>Connecting to new MCP Servers.</li>
+<li>Granting access to filesystem roots (<code>roots</code> feature).</li>
+<li>Authorizing OAuth flows (<a href="../03-protocol-interactions/#33-authorization-http-transport">Section 3.3</a>).</li>
+<li>Executing <code>tools/call</code> requests, showing the tool name and arguments.</li>
+<li>Approving <code>sampling/createMessage</code> requests, showing the prompt content.</li>
+</ul>
+</li>
+<li><strong>Secure UI Development:</strong> Follow standard secure UI practices to prevent injection, clickjacking, etc.</li>
+<li><strong>Input Sanitization:</strong> Sanitize any user input that might become part of MCP request parameters (e.g., arguments for <code>prompts/get</code>).</li>
+<li><strong>Output Encoding/Sanitization:</strong> Safely render information received from MCP Servers (e.g., resource content, tool results, log messages) to prevent XSS if displayed in the UI.</li>
+</ul>
+</li>
+</ul>
+<h3 id="62-hostclient-mcp-server">6.2. Host/Client &lt;-&gt; MCP Server</h3>
+<ul>
+<li><strong>Description:</strong> The communication channel where JSON-RPC messages are exchanged between the client (running within the Host) and the MCP server. This occurs over a transport like stdio, HTTP/S, or WebSockets.</li>
+<li><strong>Trust Assumptions:</strong> This is often the least trusted boundary, especially if connecting to third-party or public MCP servers. The client cannot inherently trust the server, and the server cannot inherently trust the client.</li>
+<li><strong>Key Risks:</strong><ul>
+<li><strong>Untrusted Server:</strong> Malicious server attempts to exploit client vulnerabilities via crafted responses/notifications, requests unauthorized actions (e.g., sampling), provides malicious resource content/tool results, lies about capabilities, causes DoS.</li>
+<li><strong>Untrusted Client:</strong> Malicious client attempts to exploit server vulnerabilities via crafted requests/notifications, accesses unauthorized resources/tools, bypasses auth, lies about capabilities, causes DoS (e.g., request flooding, large requests).</li>
+<li><strong>Eavesdropping/Tampering (Transport):</strong> If the transport layer is not secured (e.g., plain HTTP/WS instead of HTTPS/WSS, unencrypted stdio), messages can be intercepted or modified in transit.</li>
+<li><strong>Authentication/Authorization Bypass:</strong> Weak or missing authentication/authorization mechanisms allow unauthorized access.</li>
+<li><strong>Input Validation Failures:</strong> Failure on either side to validate incoming message parameters (<code>params</code>) can lead to various injection attacks or crashes.</li>
+<li><strong>Information Leakage:</strong> Sensitive data might be leaked via error messages, log messages, resource/tool/prompt metadata, or even timing side channels.</li>
+</ul>
+</li>
+<li><strong>Required Controls:</strong><ul>
+<li><strong>Transport Security:</strong> Mandate secure transports (HTTPS, WSS) for non-local connections. Protect stdio communication if applicable (e.g., ensure only intended processes can connect).</li>
+<li><strong>Authentication:</strong> Implement strong authentication for both client and server where necessary (e.g., OAuth 2.1 for HTTP as per spec (<a href="../03-protocol-interactions/#33-authorization-http-transport">Section 3.3</a>), environment/token auth for stdio).</li>
+<li><strong>Authorization:</strong> Enforce granular authorization checks on the server <em>before</em> performing actions (listing/reading resources, calling tools, getting prompts). Use OAuth scopes or equivalent mechanisms.</li>
+<li><strong>Rigorous Input Validation (Both Sides):</strong> Both client and server MUST validate all incoming request/notification parameters against the expected schema/types/constraints before processing. This includes URIs, tool arguments, prompt arguments, log levels, progress tokens, etc.</li>
+<li><strong>Output Encoding/Sanitization (Both Sides):</strong> Data sent across the boundary (e.g., resource content, tool results, prompt messages, error details, log data) should be appropriately sanitized or encoded to prevent interpretation issues (like XSS) on the receiving end.</li>
+<li><strong>Capability Enforcement:</strong> Both sides MUST check received requests/notifications against the capabilities negotiated during initialization.</li>
+<li><strong>State Management:</strong> Securely manage session state, request IDs, subscription tokens, progress tokens to prevent reuse or hijacking.</li>
+<li><strong>Rate Limiting/DoS Protection:</strong> Both sides should implement rate limiting on incoming requests/notifications.</li>
+<li><strong>Least Privilege:</strong> Design both client and server components to operate with the minimum necessary privileges.</li>
+</ul>
+</li>
+</ul>
+<h3 id="63-hostclient-llm-service">6.3. Host/Client &lt;-&gt; LLM Service</h3>
+<ul>
+<li><strong>Description:</strong> The interface between the Host/Client application and the external Large Language Model service provider API (e.g., OpenAI, Anthropic, Google AI). This is primarily relevant for the <code>sampling</code> feature but also if the client uses LLMs for interpreting user requests before forming MCP calls.</li>
+<li><strong>Trust Assumptions:</strong> The Host/Client generally trusts the LLM provider to adhere to its API contract, privacy policy, and security practices. However, the specific model's behavior might be unpredictable (hallucinations, potential for harmful content generation).</li>
+<li><strong>Key Risks:</strong><ul>
+<li><strong>Data Privacy/Confidentiality:</strong> Sensitive data sent within prompts (originating from the user, the Host application, or even the MCP Server via <code>sampling/createMessage</code>) is exposed to the LLM provider. Risks include inadequate data handling by the provider, breaches, or use for model training contrary to policy/user consent.</li>
+<li><strong>Prompt Injection:</strong> Malicious input (potentially originating from an untrusted MCP Server via <code>sampling/createMessage</code>) could manipulate the LLM into unintended actions, revealing sensitive information from its context, or generating harmful content.</li>
+<li><strong>Insecure API Key Handling:</strong> Client needs to securely store and use API keys/credentials for the LLM service.</li>
+<li><strong>Harmful Content Generation:</strong> The LLM might generate biased, inaccurate, offensive, or otherwise harmful content, which the client then needs to handle appropriately (filter, warn user, potentially block from being sent back to MCP Server).</li>
+<li><strong>Cost Overruns:</strong> Uncontrolled or excessive API calls (potentially triggered by a malicious MCP server via <code>sampling</code>) could lead to high costs.</li>
+</ul>
+</li>
+<li><strong>Required Controls (Host/Client Responsibility):</strong><ul>
+<li><strong>Secure Credential Management:</strong> Protect LLM API keys using secure storage (e.g., OS keychain, secrets management systems).</li>
+<li><strong>Data Minimization:</strong> Send only necessary data to the LLM API. Consider filtering or anonymizing sensitive information before inclusion in prompts if possible.</li>
+<li><strong>Clear User Consent/Policy:</strong> Inform users about which LLM provider is used and how their data is handled (referencing provider policies).</li>
+<li><strong>Input Sanitization/Validation:</strong> Sanitize/validate data <em>before</em> including it in prompts sent to the LLM, especially if it originates from untrusted sources like an MCP server.</li>
+<li><strong>Output Filtering/Moderation:</strong> Implement mechanisms to detect and handle harmful or inappropriate content generated by the LLM before displaying it or sending it back to an MCP server.</li>
+<li><strong>Rate Limiting/Cost Controls:</strong> Implement client-side controls to limit the frequency and potential cost of LLM API calls, especially those triggered via <code>sampling</code>.</li>
+<li><strong>Context Separation:</strong> Be careful about the context provided to the LLM; avoid including sensitive internal application state or unrelated user data unless explicitly necessary and consented to.</li>
+</ul>
+</li>
+</ul>
+<h3 id="64-mcp-server-external-systems">6.4. MCP Server &lt;-&gt; External Systems</h3>
+<ul>
+<li><strong>Description:</strong> The interface between the MCP Server and any external systems it interacts with to provide resources or execute tools. This includes databases, external APIs, local filesystems, version control systems, etc.</li>
+<li><strong>Trust Assumptions:</strong> Highly variable. The Server might fully trust its own database but treat external third-party APIs with caution. Trust in the local filesystem depends on the server's deployment environment and permissions.</li>
+<li><strong>Key Risks:</strong><ul>
+<li><strong>Credential Management:</strong> Server needs to securely store and use credentials (API keys, DB passwords, service account keys) for external systems.</li>
+<li><strong>Injection Attacks:</strong> User/Client-controlled input from MCP requests (e.g., resource URIs, tool arguments) might be insecurely used in queries or commands sent to external systems (SQL injection, command injection, SSRF if accessing URLs).</li>
+<li><strong>Data Exposure:</strong> Server might inadvertently expose sensitive data from external systems via MCP resource content, tool results, prompt messages, or log messages.</li>
+<li><strong>External System Compromise:</strong> A compromised external system could return malicious data to the server, which might then be relayed to the MCP client.</li>
+<li><strong>Denial of Service:</strong> Server might overload external systems with requests, potentially triggered by excessive MCP client requests.</li>
+<li><strong>Excessive Permissions:</strong> The server process might have overly broad permissions on the filesystem or other external resources it accesses.</li>
+</ul>
+</li>
+<li><strong>Required Controls (MCP Server Responsibility):</strong><ul>
+<li><strong>Secure Credential Management:</strong> Store external system credentials securely (secrets management, environment variables, secure configuration).</li>
+<li><strong>Input Validation and Parameterization:</strong> Rigorously validate and sanitize any input originating from MCP requests before using it to interact with external systems. Use parameterized queries (for SQL), safe file path handling, and proper escaping for shell commands or API calls.</li>
+<li><strong>Output Sanitization/Filtering:</strong> Filter or sanitize data retrieved from external systems before including it in MCP responses or logs.</li>
+<li><strong>Least Privilege:</strong> Run the server process with the minimum necessary permissions to access required external systems/files.</li>
+<li><strong>Network Segmentation/Firewalls:</strong> Restrict the server's outbound network access to only necessary external systems.</li>
+<li><strong>Error Handling:</strong> Handle errors from external systems gracefully without leaking sensitive details.</li>
+<li><strong>Rate Limiting:</strong> Implement rate limiting for requests to external systems, potentially tied to MCP client rate limits.</li>
+<li><strong>Validate External System Responses:</strong> Treat data from external systems (especially third-party APIs) as potentially untrusted; validate or sanitize it before use.</li>
+</ul>
+</li>
+</ul>
+<h3 id="65-mcp-server-internal-boundaries">6.5. MCP Server Internal Boundaries</h3>
+<ul>
+<li><strong>Description:</strong> Interfaces between different logical components <em>within</em> the MCP server process itself (e.g., between the main request handler, authorization logic, resource provider modules, tool execution sandbox, data access layers).</li>
+<li><strong>Trust Assumptions:</strong> While often within the same process, different components might operate with different privileges or handle data of varying sensitivity. Trust should not be implicitly assumed between components.</li>
+<li><strong>Key Risks:</strong><ul>
+<li><strong>Privilege Escalation:</strong> A vulnerability in a lower-privileged component (e.g., request parsing) could potentially allow an attacker to influence or control higher-privileged components (e.g., tool execution, direct filesystem access).</li>
+<li><strong>Data Flow Violations:</strong> Sensitive data (e.g., credentials for external systems, user data from resources) might incorrectly flow between components and get logged or returned inappropriately.</li>
+<li><strong>Bypassed Controls:</strong> Authorization or validation logic might be incorrectly bypassed if components call each other directly without going through the proper checks.</li>
+<li><strong>Insecure State Management:</strong> Shared state between components might be manipulated in unexpected ways.</li>
+</ul>
+</li>
+<li><strong>Required Controls (MCP Server Responsibility):</strong><ul>
+<li><strong>Modular Design:</strong> Structure the server code into well-defined modules with clear responsibilities and interfaces.</li>
+<li><strong>Centralized Input Validation:</strong> Perform initial validation of MCP request parameters at the entry point before passing data to internal components.</li>
+<li><strong>Centralized Authorization:</strong> Enforce authorization checks consistently before dispatching requests to resource/tool/prompt handling logic.</li>
+<li><strong>Data Flow Analysis:</strong> Carefully track how sensitive data flows between components, ensuring it's only accessed where necessary and not leaked (e.g., into logs or generic error messages).</li>
+<li><strong>Sandboxing (for Tools):</strong> If possible and applicable, execute high-risk tool logic in a sandboxed environment with restricted permissions (e.g., separate process, container, specific language-level sandboxing).</li>
+<li><strong>Defensive Programming:</strong> Components should validate assumptions about data received from other internal components, especially if trust levels differ.</li>
+<li><strong>Secure State Handling:</strong> Protect shared state using appropriate synchronization mechanisms and validate state transitions. </li>
+</ul>
+</li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "header.autohide", "toc.integrate", "navigation.expand"], "search": "../assets/javascripts/workers/search.f8cc74c7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.c8b220af.min.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,727 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../06-trust-boundaries/">
+      
+      
+        <link rel="next" href="../08-stride-modeling/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.11">
+    
+    
+      
+        <title>Security Considerations - MCP Security Analysis</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.4af4bdda.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="cyan">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#7-security-considerations-per-component" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="MCP Security Analysis" class="md-header__button md-logo" aria-label="MCP Security Analysis" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            MCP Security Analysis
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Security Considerations
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="cyan"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="blue-grey" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/eilonc-dev/mcp-security-analysis" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    eilonc-dev/mcp-security-analysis
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="MCP Security Analysis" class="md-nav__button md-logo" aria-label="MCP Security Analysis" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    MCP Security Analysis
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/eilonc-dev/mcp-security-analysis" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    eilonc-dev/mcp-security-analysis
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-core-concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Core Concepts
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03-protocol-interactions/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Protocol Interactions
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-data-structures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Data Structures
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-communication-patterns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Communication Patterns
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-trust-boundaries/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Trust Boundaries
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Security Considerations
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Security Considerations
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#7-security-considerations-per-component" class="md-nav__link">
+    <span class="md-ellipsis">
+      7. Security Considerations per Component
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="7. Security Considerations per Component">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#71-initialization-lifecycle-initialize-notificationsinitialized" class="md-nav__link">
+    <span class="md-ellipsis">
+      7.1. Initialization &amp; Lifecycle (initialize, notifications/initialized)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#72-resources-resourceslist-resourcesread-resourcestemplateslist-resourcessubscribe-notifications" class="md-nav__link">
+    <span class="md-ellipsis">
+      7.2. Resources (resources/list, resources/read, resources/templates/list, resources/subscribe, notifications)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#73-tools-toolslist-toolscall-notifications" class="md-nav__link">
+    <span class="md-ellipsis">
+      7.3. Tools (tools/list, tools/call, notifications)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#74-prompts-promptslist-promptsget-notifications" class="md-nav__link">
+    <span class="md-ellipsis">
+      7.4. Prompts (prompts/list, prompts/get, notifications)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#75-sampling-samplingcreatemessage" class="md-nav__link">
+    <span class="md-ellipsis">
+      7.5. Sampling (sampling/createMessage)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#76-roots-rootslist-notifications" class="md-nav__link">
+    <span class="md-ellipsis">
+      7.6. Roots (roots/list, notifications)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#77-authorization-http-oauth-21" class="md-nav__link">
+    <span class="md-ellipsis">
+      7.7. Authorization (HTTP - OAuth 2.1)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#78-utilities-logging-pagination-cancellation-progress-ping-completion" class="md-nav__link">
+    <span class="md-ellipsis">
+      7.8. Utilities (Logging, Pagination, Cancellation, Progress, Ping, Completion)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../08-stride-modeling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Threat Modeling (STRIDE)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../09-implementation-insights/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Implementation Insights
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../10-summary-hotspots/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Summary
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+  <h1>Security Considerations</h1>
+
+<h2 id="7-security-considerations-per-component">7. Security Considerations per Component</h2>
+<p>This section consolidates the key security risks and required controls organized by the major MCP components and features.</p>
+<h3 id="71-initialization-lifecycle-initialize-notificationsinitialized">7.1. Initialization &amp; Lifecycle (<code>initialize</code>, <code>notifications/initialized</code>)</h3>
+<ul>
+<li><strong>Key Risks:</strong> Capability spoofing/misrepresentation, protocol version downgrade attacks, information leakage (<code>clientInfo</code>/<code>serverInfo</code>), resource exhaustion during init, state mismatches if <code>initialized</code> notification fails.</li>
+<li><strong>Required Controls:</strong> Strict validation of negotiated capabilities against actual implementation, secure version negotiation logic, minimize info in <code>clientInfo</code>/<code>serverInfo</code>, rate limit <code>initialize</code> requests, robust state management, enforce request order around <code>initialize</code>/<code>initialized</code>.</li>
+<li><strong>(See <a href="../03-protocol-interactions/#32-lifecycle-management-initialize-shutdown-exit">Section 3.2</a>, <a href="../04-data-structures/#41-capabilities">Section 4.1</a>, <a href="../06-trust-boundaries/#62-hostclient---mcp-server">Section 6.2</a>)</strong></li>
+</ul>
+<h3 id="72-resources-resourceslist-resourcesread-resourcestemplateslist-resourcessubscribe-notifications">7.2. Resources (<code>resources/list</code>, <code>resources/read</code>, <code>resources/templates/list</code>, <code>resources/subscribe</code>, notifications)</h3>
+<ul>
+<li><strong>Key Risks:</strong> Path traversal via URI manipulation (<code>resources/read</code>, <code>resources/subscribe</code>), insufficient access control (listing or reading sensitive data), data leakage via metadata in <code>resources/list</code>, DoS via large resource requests or subscription storms, insecure client-side handling of received content (<code>text</code>/<code>blob</code>), URI template injection, MIME type spoofing.</li>
+<li><strong>Required Controls (Server):</strong> Rigorous URI validation/canonicalization, enforce authorization <em>before</em> list/read/subscribe, filter lists based on permissions, implement size limits/streaming for <code>resources/read</code>, rate limit subscriptions and notifications.</li>
+<li><strong>Required Controls (Client):</strong> Safely handle/render received content based on MIME type, treat cursors as opaque.</li>
+<li><strong>(See <a href="../04-data-structures/#42-resources">Section 4.2</a>, <a href="../05-communication-patterns/#52-resource-discovery--reading">Section 5.2</a>, <a href="../05-communication-patterns/#56-resource-subscription--update-optional">Section 5.6</a>, <a href="../06-trust-boundaries/#62-hostclient---mcp-server">Section 6.2</a>, <a href="../06-trust-boundaries/#64-mcp-server---external-systems">Section 6.4</a>, <a href="../06-trust-boundaries/#65-mcp-server-internal-boundaries">Section 6.5</a>)</strong></li>
+</ul>
+<h3 id="73-tools-toolslist-toolscall-notifications">7.3. Tools (<code>tools/list</code>, <code>tools/call</code>, notifications)</h3>
+<ul>
+<li><strong>Key Risks:</strong> Arbitrary code execution (highest risk), injection attacks via tool <code>arguments</code>, insufficient access control, data exfiltration via arguments, output sanitization failures (leading to XSS on client), untrusted tool descriptions/annotations misleading user/LLM, DoS via excessive calls.</li>
+<li><strong>Required Controls (Server):</strong> Rigorous input validation against <code>inputSchema</code>, strong authorization checks, sanitize output <code>content</code>, rate limit <code>tools/call</code>, consider sandboxing tool execution.</li>
+<li><strong>Required Controls (Client):</strong> Implement mandatory user confirmation (human-in-the-loop) showing tool name and arguments, treat descriptions/annotations as untrusted, handle received <code>content</code> safely.</li>
+<li><strong>(See <a href="../04-data-structures/#43-tools">Section 4.3</a>, <a href="../05-communication-patterns/#53-tool-discovery--execution">Section 5.3</a>, <a href="../06-trust-boundaries/#61-user---hostclient-ui">Section 6.1</a>, <a href="../06-trust-boundaries/#62-hostclient---mcp-server">Section 6.2</a>, <a href="../06-trust-boundaries/#64-mcp-server---external-systems">Section 6.4</a>, <a href="../06-trust-boundaries/#65-mcp-server-internal-boundaries">Section 6.5</a>)</strong></li>
+</ul>
+<h3 id="74-prompts-promptslist-promptsget-notifications">7.4. Prompts (<code>prompts/list</code>, <code>prompts/get</code>, notifications)</h3>
+<ul>
+<li><strong>Key Risks:</strong> Server-side argument injection into templates, insufficient access control (listing/getting prompts), sensitive data exposure in templates or generated messages, misleading prompts tricking user/LLM, unsafe handling of embedded resources.</li>
+<li><strong>Required Controls (Server):</strong> Sanitize arguments <em>before</em> template insertion, enforce authorization, design templates carefully to avoid data exposure.</li>
+<li><strong>Required Controls (Client):</strong> Handle received message <code>content</code> (including embedded resources) safely.</li>
+<li><strong>(See <a href="../04-data-structures/#44-prompts">Section 4.4</a>, <a href="../05-communication-patterns/#54-prompt-discovery--usage">Section 5.4</a>, <a href="../06-trust-boundaries/#62-hostclient---mcp-server">Section 6.2</a>)</strong></li>
+</ul>
+<h3 id="75-sampling-samplingcreatemessage">7.5. Sampling (<code>sampling/createMessage</code>)</h3>
+<ul>
+<li><strong>Key Risks:</strong> Bypass of client-side user consent, prompt injection from server manipulating client's LLM, client resource exhaustion (cost/rate limiting), sensitive data leakage (Server-&gt;Client in prompt, potentially Client-&gt;Server in response), harmful content generation by LLM.</li>
+<li><strong>Required Controls (Client):</strong> Implement mandatory user confirmation (view/edit prompt), sanitize/validate server-provided prompt content before sending to LLM, implement rate limiting/cost controls, filter/moderate LLM responses before returning to server or user.</li>
+<li><strong>(See <a href="../04-data-structures/#45-sampling-client-feature">Section 4.5</a>, <a href="../05-communication-patterns/#55-server-initiated-sampling">Section 5.5</a>, <a href="../06-trust-boundaries/#61-user---hostclient-ui">Section 6.1</a>, <a href="../06-trust-boundaries/#62-hostclient---mcp-server">Section 6.2</a>, <a href="../06-trust-boundaries/#63-hostclient---llm-service">Section 6.3</a>)</strong></li>
+</ul>
+<h3 id="76-roots-rootslist-notifications">7.6. Roots (<code>roots/list</code>, notifications)</h3>
+<ul>
+<li><strong>Key Risks:</strong> Information disclosure (filesystem structure), exposure of unintended/sensitive directories by client.</li>
+<li><strong>Required Controls (Client):</strong> Expose only intended roots, ideally with user consent per root, validate exposed URIs.</li>
+<li><strong>Required Controls (Server):</strong> Respect root boundaries when forming resource URIs (though enforcement relies on resource access controls).</li>
+<li><strong>(See <a href="../04-data-structures/#46-roots-client-feature">Section 4.6</a>, <a href="../06-trust-boundaries/#61-user---hostclient-ui">Section 6.1</a>, <a href="../06-trust-boundaries/#62-hostclient---mcp-server">Section 6.2</a>)</strong></li>
+</ul>
+<h3 id="77-authorization-http-oauth-21">7.7. Authorization (HTTP - OAuth 2.1)</h3>
+<ul>
+<li><strong>Key Risks:</strong> Insecure transport (HTTP instead of HTTPS), weak PKCE implementation, improper redirect URI validation (Open Redirect), insecure client-side token storage, weak server-side token validation (expiry, scope, signature), insecure dynamic client registration, third-party auth complexities.</li>
+<li><strong>Required Controls:</strong> Enforce HTTPS, use robust PKCE libraries, perform strict redirect URI matching, use secure storage for tokens (client), implement thorough token validation (server), secure registration endpoints, carefully implement third-party auth flows.</li>
+<li><strong>(See <a href="../03-protocol-interactions/#33-authorization-http-transport">Section 3.3</a>, <a href="../06-trust-boundaries/#62-hostclient---mcp-server">Section 6.2</a>)</strong></li>
+</ul>
+<h3 id="78-utilities-logging-pagination-cancellation-progress-ping-completion">7.8. Utilities (Logging, Pagination, Cancellation, Progress, Ping, Completion)</h3>
+<ul>
+<li><strong>Key Risks:</strong> Sensitive data leakage in logs (<code>notifications/message</code>), DoS via log/notification flooding (logs, progress, cancellation), insecure pagination cursor handling, information leakage via completion suggestions.</li>
+<li><strong>Required Controls:</strong> Sanitize all log data (Server), rate limit logs/notifications (Server/Client), validate cursors (Server), treat cursors as opaque (Client), authorize and filter completion requests/responses (Server).</li>
+<li><strong>(See <a href="../04-data-structures/#47-utility-features">Section 4.7</a>)</strong> </li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "header.autohide", "toc.integrate", "navigation.expand"], "search": "../assets/javascripts/workers/search.f8cc74c7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.c8b220af.min.js"></script>
+      
+    
+  </body>
+</html>
