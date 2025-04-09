@@ -1,0 +1,764 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+        <link rel="prev" href="../02-core-concepts/">
+      
+      
+        <link rel="next" href="../04-data-structures/">
+      
+      
+      <link rel="icon" href="../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.6.11">
+    
+    
+      
+        <title>Protocol Interactions - MCP Security Analysis</title>
+      
+    
+    
+      <link rel="stylesheet" href="../assets/stylesheets/main.4af4bdda.min.css">
+      
+        
+        <link rel="stylesheet" href="../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300,300i,400,400i,700,700i%7CJetBrains+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Inter";--md-code-font:"JetBrains Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="cyan">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#3-protocol-interactions-message-deep-dive" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href=".." title="MCP Security Analysis" class="md-header__button md-logo" aria-label="MCP Security Analysis" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            MCP Security Analysis
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Protocol Interactions
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="cyan"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="" data-md-color-scheme="slate" data-md-color-primary="blue-grey" data-md-color-accent="cyan"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/eilonc-dev/mcp-security-analysis" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    eilonc-dev/mcp-security-analysis
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+  
+
+<nav class="md-nav md-nav--primary md-nav--integrated" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href=".." title="MCP Security Analysis" class="md-nav__button md-logo" aria-label="MCP Security Analysis" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    MCP Security Analysis
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/eilonc-dev/mcp-security-analysis" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+  </div>
+  <div class="md-source__repository">
+    eilonc-dev/mcp-security-analysis
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Home
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02-core-concepts/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Core Concepts
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    Protocol Interactions
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    Protocol Interactions
+    
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#3-protocol-interactions-message-deep-dive" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Protocol Interactions &amp; Message Deep Dive
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="3. Protocol Interactions &amp; Message Deep Dive">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#31-base-message-structures-json-rpc-20" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.1. Base Message Structures (JSON-RPC 2.0)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#32-lifecycle-management-initialize-shutdown-exit" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.2. Lifecycle Management (Initialize, Shutdown, Exit)
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#33-authorization-http-transport" class="md-nav__link">
+    <span class="md-ellipsis">
+      3.3. Authorization (HTTP Transport)
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04-data-structures/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Data Structures
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05-communication-patterns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Communication Patterns
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06-trust-boundaries/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Trust Boundaries
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../07-security-considerations-per-component/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Security Considerations
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../08-stride-modeling/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Threat Modeling (STRIDE)
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../09-implementation-insights/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Implementation Insights
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../10-summary-hotspots/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Summary
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+  
+  
+
+
+  <h1>Protocol Interactions</h1>
+
+<h2 id="3-protocol-interactions-message-deep-dive">3. Protocol Interactions &amp; Message Deep Dive</h2>
+<p>This section details the fundamental JSON-RPC 2.0 message structures used by MCP, lifecycle management, and authorization basics.</p>
+<h3 id="31-base-message-structures-json-rpc-20">3.1. Base Message Structures (JSON-RPC 2.0)</h3>
+<p>MCP uses standard JSON-RPC 2.0 for all messages. Key requirements and constraints:</p>
+<ul>
+<li><strong>Requests:</strong><ul>
+<li>Sent by either Client or Server to initiate an operation.</li>
+<li><code>jsonrpc</code>: "2.0"</li>
+<li><code>id</code>: <code>string</code> or <code>number</code> (Mandatory, <strong>MUST NOT</strong> be <code>null</code>). Request IDs must be unique per session for the sender.</li>
+<li><code>method</code>: <code>string</code> (Name of the method to be invoked).</li>
+<li><code>params</code>: <code>object</code> (Optional parameters for the method).</li>
+</ul>
+</li>
+<li><strong>Responses:</strong><ul>
+<li>Sent in reply to a Request.</li>
+<li><code>jsonrpc</code>: "2.0"</li>
+<li><code>id</code>: <code>string</code> or <code>number</code> (Must match the ID of the corresponding Request).</li>
+<li><code>result</code>: <code>object</code> (Present on success, contains the operation result).</li>
+<li><code>error</code>: <code>object</code> (Present on failure). Must contain <code>code</code> (<code>integer</code>), <code>message</code> (<code>string</code>), and optionally <code>data</code> (<code>unknown</code>).</li>
+<li>A response <strong>MUST</strong> contain either <code>result</code> or <code>error</code>, but not both.</li>
+</ul>
+</li>
+<li><strong>Notifications:</strong><ul>
+<li>Sent by either Client or Server as a one-way message (no response expected).</li>
+<li><code>jsonrpc</code>: "2.0"</li>
+<li><code>method</code>: <code>string</code> (Name of the notification event).</li>
+<li><code>params</code>: <code>object</code> (Optional parameters for the notification).</li>
+<li><strong>MUST NOT</strong> include an <code>id</code>.</li>
+</ul>
+</li>
+<li><strong>Batching:</strong><ul>
+<li>Implementations <strong>MUST</strong> support <em>receiving</em> batched requests/notifications (sent as a JSON array).</li>
+<li>Implementations <strong>MAY</strong> support <em>sending</em> batches.</li>
+</ul>
+</li>
+</ul>
+<p><strong>Security Considerations (Base JSON-RPC):</strong></p>
+<ul>
+<li><strong>Request ID Uniqueness:</strong> While mandated, improper handling could lead to response mismatches or potential replay attacks if IDs are predictable or reused insecurely within a session.</li>
+<li><strong>Error Handling:</strong> Sensitive information could be leaked in <code>error</code> messages (<code>message</code> or <code>data</code> fields) if not carefully constructed.</li>
+<li><strong>Batching Complexity:</strong> Handling batches correctly is crucial. Errors in processing one part of a batch should not necessarily halt others, but error reporting needs to be precise. Large batches could be used for DoS attempts.</li>
+</ul>
+<h3 id="32-lifecycle-management-initialize-shutdown-exit">3.2. Lifecycle Management (Initialize, Shutdown, Exit)</h3>
+<p>The connection follows a defined lifecycle:</p>
+<ol>
+<li><strong>Initialization Phase:</strong><ul>
+<li><strong>Trigger:</strong> Client sends <code>initialize</code> request to Server.</li>
+<li><strong>Purpose:</strong> Negotiate protocol version, exchange capabilities, share implementation info (<code>clientInfo</code>, <code>serverInfo</code>).</li>
+<li><strong>Client <code>initialize</code> Params:</strong> <code>protocolVersion</code>, <code>capabilities</code> (Client's offered features like <code>roots</code>, <code>sampling</code>), <code>clientInfo</code> (<code>name</code>, <code>version</code>).</li>
+<li><strong>Server <code>initialize</code> Result:</strong> <code>protocolVersion</code> (Agreed version), <code>capabilities</code> (Server's offered features like <code>logging</code>, <code>prompts</code>, <code>resources</code>, <code>tools</code>), <code>serverInfo</code> (<code>name</code>, <code>version</code>).</li>
+<li><strong>Protocol Version Negotiation:</strong> Client proposes version (latest supported). Server responds with the same version if supported, otherwise its latest supported version. Client SHOULD disconnect if server's version is unsupported.</li>
+<li><strong>Capability Negotiation:</strong> Defines which optional features (Resources, Tools, Prompts, Sampling, Logging, Roots, etc.) are available for the session. Specific sub-capabilities (e.g., <code>listChanged</code>, <code>subscribe</code>) are also negotiated here.</li>
+<li><strong>Confirmation:</strong> Client sends <code>notifications/initialized</code> notification after receiving a successful <code>initialize</code> response.</li>
+<li><strong>Restrictions:</strong><ul>
+<li><code>initialize</code> request MUST NOT be batched.</li>
+<li>Client SHOULD NOT send other requests (except ping) before server responds to <code>initialize</code>.</li>
+<li>Server SHOULD NOT send requests (except ping, logging) before receiving <code>notifications/initialized</code>.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Operation Phase:</strong><ul>
+<li>Normal exchange of requests, responses, and notifications based on negotiated capabilities and protocol version.</li>
+</ul>
+</li>
+<li><strong>Shutdown Phase:</strong><ul>
+<li>Clean termination initiated usually by the Client.</li>
+<li>No specific protocol messages.</li>
+<li>Relies on transport layer closure (e.g., closing stdio streams, closing HTTP connections).</li>
+<li>Specification provides guidance for graceful shutdown with stdio (close input, wait/SIGTERM, wait/SIGKILL).</li>
+</ul>
+</li>
+</ol>
+<p><strong>Security Considerations (Lifecycle):</strong></p>
+<ul>
+<li><strong>Initialization Vulnerabilities:</strong><ul>
+<li><strong>Capability Spoofing/Misrepresentation:</strong> A malicious Client or Server could lie about its <code>capabilities</code> or <code>Info</code>, potentially tricking the other party into insecure operations or attempting to enable features it doesn't securely support.</li>
+<li><strong>Version Downgrade Attacks:</strong> If negotiation logic isn't strict, an attacker might force the use of an older, potentially less secure protocol version.</li>
+<li><strong>Resource Exhaustion during Init:</strong> A flood of <code>initialize</code> requests or large capability objects could cause DoS.</li>
+<li><strong>Information Leakage:</strong> <code>clientInfo</code> and <code>serverInfo</code> could leak potentially sensitive details about the software versions in use, aiding attackers in finding known exploits.</li>
+</ul>
+</li>
+<li><strong>Improper Shutdown:</strong> Failure to shut down gracefully (especially with stdio) could leave orphaned server processes, potentially consuming resources or holding locks.</li>
+<li><strong>State Mismatches:</strong> If the <code>notifications/initialized</code> is lost or mishandled, the Client and Server might have different understandings of the session state, leading to errors or unexpected behavior.</li>
+<li><strong>Capability Enforcement:</strong> The protocol relies on implementations to <em>honor</em> the negotiated capabilities. A compromised or malicious participant could ignore the negotiation and attempt to use features that weren't agreed upon.</li>
+</ul>
+<h3 id="33-authorization-http-transport">3.3. Authorization (HTTP Transport)</h3>
+<p>Authorization is optional but specified for HTTP-based transports. Implementations using stdio SHOULD retrieve credentials from the environment instead.</p>
+<ul>
+<li><strong>Standard:</strong> Based on OAuth 2.1 (IETF Draft) with PKCE mandatory for all clients.</li>
+<li><strong>Trigger:</strong> Server responds with HTTP 401 Unauthorized when authorization is required.</li>
+<li><strong>Flow:</strong> Standard OAuth 2.1 Authorization Code Grant flow with PKCE.<ol>
+<li>Client receives 401.</li>
+<li>Client generates <code>code_verifier</code> and <code>code_challenge</code>.</li>
+<li>Client directs user-agent (browser) to Server's authorization endpoint (<code>/authorize</code> by default, or discovered via metadata) with <code>code_challenge</code>.</li>
+<li>User authenticates and authorizes the Client via the Server.</li>
+<li>Server redirects user-agent back to Client's registered <code>redirect_uri</code> with an <code>authorization_code</code>.</li>
+<li>Client receives <code>authorization_code</code>.</li>
+<li>Client makes a POST request to the Server's token endpoint (<code>/token</code> by default, or discovered) including the <code>authorization_code</code> and the original <code>code_verifier</code>.</li>
+<li>Server verifies the code and verifier, issues an <code>access_token</code> (and optionally a <code>refresh_token</code>).</li>
+<li>Client includes the <code>access_token</code> in the <code>Authorization: Bearer &lt;token&gt;</code> header for subsequent MCP requests over HTTP.</li>
+</ol>
+</li>
+<li><strong>Metadata Discovery (RFC 8414):</strong><ul>
+<li>Clients MUST attempt discovery via <code>GET /.well-known/oauth-authorization-server</code> relative to the <em>authorization base URL</em> (Server URL with path removed).</li>
+<li>Clients SHOULD include <code>MCP-Protocol-Version</code> header in discovery requests.</li>
+<li>Servers SHOULD provide metadata; if not, Clients MUST fallback to default paths (<code>/authorize</code>, <code>/token</code>, <code>/register</code>).</li>
+</ul>
+</li>
+<li><strong>Dynamic Client Registration (RFC 7591):</strong><ul>
+<li>Clients and Servers SHOULD support dynamic registration via the registration endpoint (<code>/register</code> by default or discovered).</li>
+<li>Allows clients to obtain <code>client_id</code> (and potentially <code>client_secret</code> for confidential clients) automatically.</li>
+<li>Servers not supporting it require alternative methods (hardcoded ID, manual user entry).</li>
+</ul>
+</li>
+<li><strong>Access Token Usage:</strong><ul>
+<li>MUST be sent in <code>Authorization: Bearer &lt;token&gt;</code> header for every HTTP request.</li>
+<li>MUST NOT be sent in URI query string.</li>
+<li>Servers MUST validate tokens (signature, expiry, scope) and respond with 401/403 on failure.</li>
+</ul>
+</li>
+<li><strong>Third-Party Authorization:</strong> Servers MAY delegate auth to a third-party OAuth server, acting as a client to the third-party and an authorization server to the MCP client. Requires careful session binding and validation.</li>
+</ul>
+<p><strong>Security Considerations (Authorization):</strong></p>
+<ul>
+<li><strong>Transport Security:</strong> All authorization endpoints MUST use HTTPS.</li>
+<li><strong>PKCE Implementation:</strong> Correct implementation is crucial to prevent authorization code interception attacks.</li>
+<li><strong>Redirect URI Validation:</strong> Servers MUST strictly validate <code>redirect_uri</code> against pre-registered values to prevent Open Redirect attacks and token leakage.</li>
+<li><strong>Token Storage (Client):</strong> Clients MUST store access and refresh tokens securely (e.g., using OS keychain, encrypted storage).</li>
+<li><strong>Token Handling (Server):</strong> Servers SHOULD enforce short token lifetimes, support token rotation (refresh tokens), and securely validate tokens.</li>
+<li><strong>Dynamic Client Registration Security:</strong> Unauthenticated or improperly secured registration endpoints could allow malicious clients to register. Servers need robust policies.</li>
+<li><strong>Metadata Security:</strong> Relying on potentially unsecured HTTP for discovery (if HTTPS is not enforced) could lead to endpoint spoofing.</li>
+<li><strong>Third-Party Auth Risks:</strong> Introduces complexity and reliance on the third-party's security. Session binding must be robust to prevent attacks where a compromised third-party session grants access to MCP.</li>
+<li><strong>Scope Management:</strong> Proper definition and enforcement of OAuth scopes are needed to limit the client's access to only what the user authorized (least privilege).</li>
+<li><strong>Credential Handling (stdio):</strong> Retrieving credentials from the environment for stdio transport needs careful handling to avoid exposing secrets in logs, process lists, or insecure environment variable storage. </li>
+</ul>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      <script id="__config" type="application/json">{"base": "..", "features": ["navigation.instant", "header.autohide", "toc.integrate", "navigation.expand"], "search": "../assets/javascripts/workers/search.f8cc74c7.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../assets/javascripts/bundle.c8b220af.min.js"></script>
+      
+    
+  </body>
+</html>
