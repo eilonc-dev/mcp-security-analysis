@@ -8,26 +8,28 @@ theme:
     text: Inter
     code: JetBrains Mono
   palette: 
-    # Palette toggle for automatic light/dark mode based on system preference
     - scheme: default 
-      primary: teal  # Changed primary color
-      accent: amber  # Changed accent color
+      primary: blue grey 
+      accent: amber
       toggle:
         icon: material/brightness-auto
         name: Switch to dark mode
     - scheme: slate
-      primary: teal  # Changed primary color
-      accent: amber  # Changed accent color
+      primary: blue grey
+      accent: amber
       toggle:
         icon: material/brightness-auto
         name: Switch to light mode
   features:
     - navigation.instant
-    - header.autohide       # Add: Hide header on scroll
-    - toc.integrate         # Add: Integrate ToC into sidebar/navigation
-    - navigation.expand     # Add: Keep sidebar navigation expanded
-    - content.code.copy   # Add: Code copy button
+    - header.autohide
+    - toc.integrate
+    - navigation.expand
+    - content.code.copy
     - search.suggest
+
+extra_css:
+  - assets/css/custom.css
 
 nav:
   - Overview:
@@ -58,5 +60,3 @@ markdown_extensions:
   - toc:
       permalink: true
       toc_depth: 3
-
-# Remove the incorrect toc block below 
