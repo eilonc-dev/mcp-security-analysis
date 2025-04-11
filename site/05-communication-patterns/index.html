@@ -601,7 +601,7 @@
 <p>This section illustrates typical sequences of message exchanges for key MCP operations. These flows highlight how different protocol features interact.</p>
 <h3 id="51-initialization-capability-negotiation">5.1. Initialization &amp; Capability Negotiation</h3>
 <p>This is the mandatory first step after establishing the underlying transport connection (e.g., TCP, WebSocket, stdio pipe).</p>
-<pre><code class="language-mermaid">sequenceDiagram
+<pre class="mermaid"><code>sequenceDiagram
     participant Client
     participant Server
 
@@ -619,8 +619,7 @@
         Server--&gt;&gt;-Client: (Ready for normal operation)
     end
 
-    Note over Client,Server: Operation Phase Begins (if successful)
-</code></pre>
+    Note over Client,Server: Operation Phase Begins (if successful)</code></pre>
 <p><strong>Flow Description:</strong></p>
 <ol>
 <li><strong>Client -&gt; Server (<code>initialize</code> Request):</strong> The client initiates the handshake, declaring its identity (<code>clientInfo</code>), the protocol version(s) it supports, and the capabilities it offers (e.g., <code>sampling</code>, <code>roots</code>).</li>
@@ -630,7 +629,7 @@
 <p><strong>Security Implications:</strong> See <a href="../03-protocol-interactions/#32-lifecycle-management-initialize-shutdown-exit">Section 3.2</a> for detailed security considerations related to this phase (Capability Spoofing, Version Downgrade, Info Leakage, etc.). The integrity and validation of this initial exchange are critical for session security.</p>
 <h3 id="52-resource-discovery-reading">5.2. Resource Discovery &amp; Reading</h3>
 <p>This pattern describes how a client finds available resources and retrieves the content of one.</p>
-<pre><code class="language-mermaid">sequenceDiagram
+<pre class="mermaid"><code>sequenceDiagram
     participant Client
     participant Server
 
@@ -642,14 +641,13 @@
     Server--&gt;&gt;-Client: 2. Response: resources/list (result)
     Note left of Server: Contains a page of 'Resource' objects and potentially 'nextCursor'.
 
-    Note over Client: User/Client selects a specific resource URI from the list (e.g., &quot;file:///data/item.txt&quot;)
+    Note over Client: User/Client selects a specific resource URI from the list (e.g., "file:///data/item.txt")
 
     Client-&gt;&gt;+Server: 3. Request: resources/read
     Note right of Client: Params include the selected 'uri'.
 
     Server--&gt;&gt;-Client: 4. Response: resources/read (result or error)
     Note left of Server: On success, contains 'Resource Content' object (with 'text' or 'blob'). On failure, returns error (e.g., Not Found, Access Denied).
-
 </code></pre>
 <p><strong>Flow Description:</strong></p>
 <ol>
@@ -666,7 +664,7 @@
 - Potential DoS via large resource requests or pagination abuse.</p>
 <h3 id="53-tool-discovery-execution">5.3. Tool Discovery &amp; Execution</h3>
 <p>This pattern shows how a client discovers available tools and invokes one, often guided by an LLM or user interaction.</p>
-<pre><code class="language-mermaid">sequenceDiagram
+<pre class="mermaid"><code>sequenceDiagram
     participant User/LLM
     participant Client
     participant Server
@@ -694,7 +692,6 @@
     Note left of Server: Server validates args, checks auth, executes tool.
     Note left of Server: Result contains 'content' array and 'isError' boolean.
     Note left of Server: Protocol errors (e.g., Unknown tool, Invalid args) use standard JSON-RPC error response.
-
 </code></pre>
 <p><strong>Flow Description:</strong></p>
 <ol>
@@ -716,7 +713,7 @@
 - Rate limiting is critical to prevent DoS.</p>
 <h3 id="54-prompt-discovery-usage">5.4. Prompt Discovery &amp; Usage</h3>
 <p>This pattern covers how a client discovers predefined prompts (like slash commands) and retrieves their content, potentially customized with arguments.</p>
-<pre><code class="language-mermaid">sequenceDiagram
+<pre class="mermaid"><code>sequenceDiagram
     participant User
     participant Client
     participant Server
@@ -740,7 +737,6 @@
     Note left of Server: Result contains 'description' and 'messages' array (role, content).
 
     Note over Client: Client uses the received 'messages' (e.g., displays to user, sends to LLM).
-
 </code></pre>
 <p><strong>Flow Description:</strong></p>
 <ol>
@@ -758,7 +754,7 @@
 - Clients need to handle received message <code>content</code> (text, image, audio, resource) safely.</p>
 <h3 id="55-server-initiated-sampling">5.5. Server-Initiated Sampling</h3>
 <p>This pattern describes how a server can request the client to perform an LLM generation, enabling server-side agentic behavior while keeping LLM access control client-side.</p>
-<pre><code class="language-mermaid">sequenceDiagram
+<pre class="mermaid"><code>sequenceDiagram
     participant Server
     participant Client
     participant User
@@ -791,8 +787,7 @@
     else Request Denied by User
         Client--&gt;&gt;Server: 9. Response: sampling/createMessage (error)
         Note right of Client: Error indicating user rejection or failure.
-    end
-</code></pre>
+    end</code></pre>
 <p><strong>Flow Description:</strong></p>
 <ol>
 <li><strong>Server -&gt; Client (<code>sampling/createMessage</code> Request):</strong> The server sends a request asking the client to generate text (or other content) using its LLM. The request includes the prompt context (<code>messages</code>), optional system prompt, and preferences for model selection (<code>modelPreferences</code>).</li>
@@ -812,7 +807,7 @@
 - <strong>Data Leakage:</strong> Sensitive data can flow from Server -&gt; Client (in prompt) and potentially Client -&gt; Server (in LLM response).</p>
 <h3 id="56-resource-subscription-update-optional">5.6. Resource Subscription &amp; Update (Optional)</h3>
 <p>This pattern applies if the server supports the <code>subscribe</code> capability for resources. It allows a client to be notified when a specific resource changes.</p>
-<pre><code class="language-mermaid">sequenceDiagram
+<pre class="mermaid"><code>sequenceDiagram
     participant Client
     participant Server
     participant External Event
@@ -838,7 +833,6 @@
 
     Server--&gt;&gt;-Client: 5. Response: resources/read (result)
     Note left of Server: Returns the new resource content.
-
 </code></pre>
 <p><strong>Flow Description:</strong></p>
 <ol>

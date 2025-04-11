@@ -279,6 +279,6 @@ sequenceDiagram
 3.  **(External Change & Notification):** At some later time, the underlying data represented by the subscribed resource `uri` changes due to external factors. The server detects this change.
 4.  **Server -> Client (`notifications/resources/updated` Notification):** The server sends a notification to the client, indicating that the resource specified by the `uri` has been updated.
 5.  **(Client Action - Fetch Update):** Upon receiving the notification, the client knows its cached version (if any) might be stale. It typically sends a `resources/read` request to the server using the same `uri` to fetch the updated content.
-6.  **Server -> Client (`resources/read` Response):** The server responds with the current content of the resource, as detailed in [Section 5.2](./05-communication-patterns.md#52-resource-discovery--reading).
+6.  **Server -> Client (`resources/read` Response):** The server responds with the current content of the resource, as detailed in [Section 5.2](./05-communication-patterns.md#52-resource-discovery-reading).
 
 </rewritten_file> 

@@ -10,14 +10,14 @@ theme:
   palette: 
     # Palette toggle for automatic light/dark mode based on system preference
     - scheme: default 
-      primary: indigo
-      accent: cyan
+      primary: teal  # Changed primary color
+      accent: amber  # Changed accent color
       toggle:
         icon: material/brightness-auto
         name: Switch to dark mode
     - scheme: slate
-      primary: blue grey # Changed for a more muted dark header
-      accent: cyan
+      primary: teal  # Changed primary color
+      accent: amber  # Changed accent color
       toggle:
         icon: material/brightness-auto
         name: Switch to light mode
@@ -26,18 +26,25 @@ theme:
     - header.autohide       # Add: Hide header on scroll
     - toc.integrate         # Add: Integrate ToC into sidebar/navigation
     - navigation.expand     # Add: Keep sidebar navigation expanded
+    - content.code.copy   # Add: Code copy button
+    - search.suggest
 
 nav:
-  - Home: index.md
-  - Core Concepts: 02-core-concepts.md
-  - Protocol Interactions: 03-protocol-interactions.md
-  - Data Structures: 04-data-structures.md
-  - Communication Patterns: 05-communication-patterns.md
-  - Trust Boundaries: 06-trust-boundaries.md
-  - Security Considerations: 07-security-considerations-per-component.md
-  - Threat Modeling (STRIDE): 08-stride-modeling.md
-  - Implementation Insights: 09-implementation-insights.md
-  - Summary: 10-summary-hotspots.md
+  - Overview:
+    - Home: index.md
+    - Core Concepts: 02-core-concepts.md
+  - Protocol Deep Dive:
+    - Protocol Interactions: 03-protocol-interactions.md
+    - Data Structures: 04-data-structures.md
+    - Communication Patterns: 05-communication-patterns.md
+    - Trust Boundaries: 06-trust-boundaries.md
+  - Security Analysis:
+    - Component Considerations: 07-security-considerations-per-component.md
+    - Threat Modeling (STRIDE): 08-stride-modeling.md
+    - Attack Scenarios: 09-attack-scenarios.md
+  - Conclusion:
+    - Implementation Insights: 10-implementation-insights.md
+    - Summary & Hotspots: 11-summary-hotspots.md
 
 markdown_extensions:
   - pymdownx.superfences:
@@ -45,6 +52,11 @@ markdown_extensions:
         - name: mermaid
           class: mermaid
           format: !!python/name:pymdownx.superfences.fence_code_format
-  - pymdownx.critic # Optional: Allows for inline comments/markup for changes
+  - pymdownx.critic
   - admonition
-  - pymdownx.details 
+  - pymdownx.details
+  - toc:
+      permalink: true
+      toc_depth: 3
+
+# Remove the incorrect toc block below 

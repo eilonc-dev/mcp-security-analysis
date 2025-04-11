@@ -1,8 +1,10 @@
-## 9. Implementation Insights (from Reference Repos)
+## 10. Implementation Insights & SDK Notes
 
-This section documents observations about how the reference implementations (from the [`modelcontextprotocol/servers`](https://github.com/modelcontextprotocol/servers) repository, covering the Python SDK and TypeScript examples) handle specific security-relevant aspects of the MCP protocol. *Note: This is based on limited code review and may not be exhaustive.*
+This section provides insights gathered from reviewing specific MCP SDK implementations (Python, TypeScript) and highlights potential security pitfalls or best practices observed.
 
-### 9.1. Python SDK: `FileResource` Path Validation (`resources/read`)
+### 10.1. Python SDK (`model-context-protocol-python`)
+
+#### 10.1.1. `FileResource` Path Validation (`resources/read`)
 
 -   **Concern:** Preventing Path Traversal when handling `file://` URIs in `resources/read` requests.
 -   **Implementation (Python SDK within [`modelcontextprotocol/servers`](https://github.com/modelcontextprotocol/servers), specifically `src/mcp/server/fastmcp/resources/types.py`):**
@@ -18,7 +20,7 @@ This section documents observations about how the reference implementations (fro
         2.  How `ResourceTemplate` implementations (specifically `template.create_resource` and the underlying functions they wrap) handle URI parsing, path resolution, and boundary checks before creating the final `FileResource`.
 -   **Conclusion:** While the SDK ensures paths are absolute *within* a `FileResource` object, relying solely on this seems insufficient to prevent path traversal. The `ResourceManager` does not add further checks. The vulnerability window exists in how URIs are mapped to `FileResource` instances, either during initial registration or dynamic template creation. **Effective path traversal prevention requires explicit boundary checks (e.g., comparing the resolved path against allowed root directories) during the URI-to-Resource mapping process.**
 
-### 9.2. Python SDK: Tool Argument Validation (`tools/call`)
+#### 10.1.2. Tool Argument Validation (`tools/call`)
 
 -   **Concern:** Ensuring arguments provided in `tools/call` requests are validated against the tool's defined `inputSchema` before execution.
 -   **Implementation (Python SDK within [`modelcontextprotocol/servers`](https://github.com/modelcontextprotocol/servers), specifically `src/mcp/server/fastmcp/tools/base.py` and `utilities/func_metadata.py`):**
@@ -35,9 +37,11 @@ This section documents observations about how the reference implementations (fro
     -   **Implicit:** The security relies on the developer accurately defining the tool function's signature with correct type hints. Missing or incorrect type hints could weaken the validation.
 -   **Conclusion:** The Python SDK's `fastmcp` layer implements strong, type-hint-based validation for tool arguments using Pydantic. This significantly mitigates risks associated with malformed or type-incorrect arguments, a common source of vulnerabilities. Developers using this SDK must ensure their tool functions have accurate type annotations.
 
-### 9.3. TypeScript Server Example (`filesystem`): Path Validation for File Tools
+### 10.2. TypeScript SDK (`model-context-protocol-typescript`)
 
--   **Concern:** Preventing Path Traversal when handling file paths provided by clients (contrast with [Section 9.1](./09-implementation-insights.md#91-python-sdk-fileresource-path-validation-resourcesread)).
+#### 10.2.1. `FileSystem` Path Validation (for File Tools)
+
+-   **Concern:** Preventing Path Traversal when handling file paths provided by clients (contrast with [Section 10.1.1](./10-implementation-insights.md#1011-fileresource-path-validation-resourcesread)).
 -   **Implementation (TypeScript example within [`modelcontextprotocol/servers`](https://github.com/modelcontextprotocol/servers), specifically `src/filesystem/index.ts`):**
     -   This example server implements file operations (`read_file`, `write_file`, etc.) as MCP *Tools*, not via the `resources` feature.
     -   It uses `zod` for schema validation of tool arguments (e.g., `ReadFileArgsSchema.safeParse`).
@@ -52,12 +56,12 @@ This section documents observations about how the reference implementations (fro
 -   **Analysis:**
     -   **Good:** Implements explicit, multi-step path validation *after* receiving the request and *before* accessing the filesystem.
     -   **Good:** Includes checks for allowed base directories, normalization, *and* symlink resolution, addressing common path traversal bypass techniques.
-    -   **Contrast with Python SDK `FileResource` ([Section 9.1](./09-implementation-insights.md#91-python-sdk-fileresource-path-validation-resourcesread)):** This `validatePath` approach provides the necessary boundary checks that seemed potentially missing in the direct `FileResource` implementation within the Python SDK. It centralizes the path validation logic before filesystem access.
+    -   **Contrast with Python SDK `FileResource` ([Section 10.1.1](./10-implementation-insights.md#1011-fileresource-path-validation-resourcesread)):** This `validatePath` approach provides the necessary boundary checks that seemed potentially missing in the direct `FileResource` implementation within the Python SDK. It centralizes the path validation logic before filesystem access.
 -   **Conclusion:** The `filesystem` TypeScript example demonstrates a robust pattern for handling client-provided file paths in MCP tools. It correctly identifies the need for explicit validation beyond basic schema checks, including normalization, base directory confinement, and symlink handling. This pattern should be adopted when implementing file access via MCP, whether through tools or the `resources` feature.
 
-### 9.4. TypeScript Server Examples: Tool Argument Validation (`tools/call`)
+#### 10.2.2. Tool Argument Validation (`tools/call`)
 
--   **Concern:** Ensuring arguments provided in `tools/call` requests are validated against the tool's defined `inputSchema` before execution (comparison to [Section 9.2](./09-implementation-insights.md#92-python-sdk-tool-argument-validation-toolscall)).
+-   **Concern:** Ensuring arguments provided in `tools/call` requests are validated against the tool's defined `inputSchema` before execution (comparison to [Section 10.1.2](./10-implementation-insights.md#1012-tool-argument-validation-toolscall)).
 -   **Implementation (TypeScript examples within [`modelcontextprotocol/servers`](https://github.com/modelcontextprotocol/servers), e.g., `redis`, `github`, `filesystem` in `src/`):**
     -   Unlike the Python SDK's `fastmcp` layer which automatically validates arguments using Pydantic based on type hints, the reference TypeScript examples generally handle validation *manually* within the `server.setRequestHandler(CallToolRequestSchema, ...)` block.
     -   The common pattern observed is to use a dedicated schema validation library, typically `zod`.
@@ -67,5 +71,5 @@ This section documents observations about how the reference implementations (fro
     -   **Good:** Explicit validation is performed before using potentially untrusted client input.
     -   **Good:** Leverages a standard library (`zod`) for defining and enforcing schemas.
     -   **Manual Effort:** Requires developers to manually define a `zod` schema (or equivalent) that ideally matches the `inputSchema` advertised in `tools/list`, and to explicitly call the validation logic in each tool handler. There's a risk of mismatch between the advertised `inputSchema` and the actual validation performed if not kept in sync.
-    -   **Contrast with Python SDK ([Section 9.2](./09-implementation-insights.md#92-python-sdk-tool-argument-validation-toolscall)):** The Python SDK's approach is more automatic, deriving validation from type hints, potentially reducing boilerplate and the risk of schema mismatches. The TypeScript examples require more explicit developer action for validation.
--   **Conclusion:** The reference TypeScript servers demonstrate a pattern of explicit, library-based (Zod) input validation within tool handlers. While effective, it places the responsibility on the developer to implement and maintain this validation for each tool, unlike the more integrated approach seen in the Python SDK's `fastmcp` layer. 
+    -   **Contrast with Python SDK ([Section 10.1.2](./10-implementation-insights.md#1012-tool-argument-validation-toolscall)):** The Python SDK's approach is more automatic, deriving validation from type hints, potentially reducing boilerplate and the risk of schema mismatches. The TypeScript examples require more explicit developer action for validation.
+-   **Conclusion:** The reference TypeScript servers demonstrate a pattern of explicit, library-based (Zod) input validation within tool handlers. While effective, it places the responsibility on the developer to implement and maintain this validation for each tool, unlike the more integrated approach seen in the Python SDK's `fastmcp` layer.
