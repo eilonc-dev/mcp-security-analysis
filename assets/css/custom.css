@@ -1,0 +1,37 @@
+.md-header {
+  background-color: var(--md-primary-fg-color);
+}
+
+/* --- Custom Styling --- */
+
+/* Reduce top margin slightly for main content area */
+.md-main__inner {
+  margin-top: 0.8rem; 
+}
+
+/* Reduce space between list items */
+.md-typeset li {
+   margin-bottom: 0.15rem;
+}
+
+/* Adjust heading weights for consistency */
+.md-typeset h1, .md-typeset h2, .md-typeset h3, .md-typeset h4 {
+   font-weight: 500; /* Adjust as needed, theme default might be heavier */
+}
+
+/* Flatter code block appearance */
+.md-typeset pre,
+.md-typeset code:not(.critic) { /* Avoid affecting critic markup */
+    box-shadow: none;
+    border: 1px solid var(--md-code-bg-color-light); /* Subtle border */
+    border-radius: 4px;
+}
+
+/* Cleaner link appearance */
+.md-typeset a {
+    text-decoration: none;
+}
+
+.md-typeset a:hover {
+    text-decoration: underline;
+} 
