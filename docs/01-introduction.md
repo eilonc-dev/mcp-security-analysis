@@ -1,0 +1,5 @@
+## 1. Introduction
+
+This document provides a detailed analysis of the Model Context Protocol (MCP) focusing on its interactions, message types, data fields, potential extension points, data flows, trust boundaries, and communication patterns. The primary goal is to identify potential security considerations and attack surfaces within the MCP ecosystem to inform the development of the `mcp-security` project.
+
+Analysis is based on the `2025-03-26` version of the MCP specification (documented at [modelcontextprotocol.io](https://modelcontextprotocol.io) and defined in the [`modelcontextprotocol/specification`](https://github.com/modelcontextprotocol/specification) repository) and insights from the reference implementations in the [`modelcontextprotocol/servers`](https://github.com/modelcontextprotocol/servers) repository (covering TypeScript examples and the Python SDK). 
