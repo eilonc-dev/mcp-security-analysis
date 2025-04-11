@@ -37,4 +37,14 @@ nav:
   - Security Considerations: 07-security-considerations-per-component.md
   - Threat Modeling (STRIDE): 08-stride-modeling.md
   - Implementation Insights: 09-implementation-insights.md
-  - Summary: 10-summary-hotspots.md 
+  - Summary: 10-summary-hotspots.md
+
+markdown_extensions:
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.critic # Optional: Allows for inline comments/markup for changes
+  - admonition
+  - pymdownx.details 
